@@ -35,15 +35,14 @@
 
 ## Technical Requirements
 1. **Backend Framework**
-    - Use a robust framework like Django, Flask, or Express.js.
+    - Framework: django
 
 2. **Database**
     - Use a relational database (e.g., PostgreSQL, MySQL) for structured data.
     - Implement database migrations for schema changes.
 
 3. **API Design**
-    - Develop RESTful APIs for frontend-backend communication.
-    - Use JSON format for data exchange.
+    - Develop RESTful APIs for frontend-backend communication
 
 4. **Authentication**
     - Implement JWT (JSON Web Tokens) for secure authentication.
