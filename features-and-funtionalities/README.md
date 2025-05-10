@@ -1,1 +1,0 @@
-Documenting project features and functionalities
