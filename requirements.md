@@ -1,73 +1,147 @@
-# Airbnb Project Backend Requirements
+# Airbnb Clone - Technical & Functional Requirements
 
-## Functional Requirements
-1. **User Authentication and Authorization**
-    - Users can register and log in using email and password.
-    - Implement role-based access control (e.g., admin, host, guest).
+This document outlines the functional and technical specifications for three core backend features of the Airbnb Clone: **User Authentication**, **Property Management**, and the **Booking System**.
 
-2. **Property Management**
-    - Hosts can create, update, and delete property listings.
-    - Guests can view property details, including photos, descriptions, and amenities.
+---
 
-3. **Search and Filtering**
-    - Guests can search for properties by location, price range, dates, and other filters.
-    - Display search results with pagination.
+## 1. User Authentication
 
-4. **Booking Management**
-    - Guests can book available properties for specific dates.
-    - Hosts can view and manage booking requests.
-    - Implement cancellation policies for bookings.
+### Functional Requirements
+- Users can register with personal details (name, email, password).
+- Users can log in using email and password.
+- Authenticated users can access protected routes.
+- Passwords must be securely hashed.
+- Token-based authentication (JWT) should be implemented.
 
-5. **Payment Processing**
-    - Integrate a payment gateway for secure transactions.
-    - Support payment methods like credit cards and digital wallets.
+### API Endpoints
 
-6. **Reviews and Ratings**
-    - Guests can leave reviews and ratings for properties.
-    - Hosts can respond to reviews.
+| Method | Endpoint         | Description                      |
+|--------|------------------|----------------------------------|
+| POST   | `/api/register`  | Register new user                |
+| POST   | `/api/login`     | Authenticate user                |
+| GET    | `/api/profile`   | Get user profile (auth required) |
 
-7. **Notifications**
-    - Send email or in-app notifications for booking confirmations, cancellations, and updates.
+### Input/Output Example
 
-8. **Admin Dashboard**
-    - Admins can manage users, properties, and bookings.
-    - Generate reports and analytics.
+**Register Input**
+let's take a simple input example
+```json
+{
+  "first_name": "Thierno",
+  "last_name": "Diallo",
+  "email": "thierno@example.com",
+  "password": "Diallo00",
+  "phone_number": "+224625213865"
+}
+```
+**Register Output**
+```json
+{
+  "message": "User registered successfully",
+}
+```
 
-## Technical Requirements
-1. **Backend Framework**
-    - Framework: django
+### Validation Rules
+- Email must be valid and unique.
+- Password must be at least 8 characters (letters, symbols and numbers).
+- Required fields: first_name, last_name, email, password.
 
-2. **Database**
-    - Use a relational database (e.g., PostgreSQL, MySQL) for structured data.
-    - Implement database migrations for schema changes.
+### Performance Criteria
+- Registration and login responses < 500ms or nearly.
+- Rate-limiting for login <= 2 times to prevent brute-force attacks.
 
-3. **API Design**
-    - Develop RESTful APIs for frontend-backend communication
+---
 
-4. **Authentication**
-    - Implement JWT (JSON Web Tokens) for secure authentication.
-    - Use OAuth2 for third-party login options (e.g., Google, Facebook).
+## 2. Property Management
 
-5. **Scalability**
-    - Design the backend to handle high traffic and concurrent users.
-    - Use caching mechanisms like Redis for performance optimization.
+### Functional Requirements
+- Hosts can add new properties.
+- Hosts can update or delete their own properties.
+- Users can browse all properties.
+- Properties must be linked to the host (user_id).
 
-6. **Error Handling**
-    - Implement comprehensive error handling and logging.
-    - Return meaningful error messages for API failures.
+### API Endpoints
 
-7. **Security**
-    - Use HTTPS for secure communication.
-    - Sanitize user inputs to prevent SQL injection and XSS attacks.
+| Method | Endpoint               | Description                     |
+|--------|------------------------|---------------------------------|
+| POST   | `/api/properties`      | Create new property (host only) |
+| GET    | `/api/properties`      | List all properties             |
+| GET    | `/api/properties/:id`  | Get property details            |
+| PUT    | `/api/properties/:id`  | Update property (host only)     |
+| DELETE | `/api/properties/:id`  | Delete property (host only)     |
 
-8. **Testing**
-    - Write unit and integration tests for critical backend components.
-    - Use tools like Postman for API testing.
+### 📤 Input/Output Example
 
-9. **Deployment**
-    - Deploy the backend on a cloud platform (e.g., AWS, Azure, Heroku).
-    - Use CI/CD pipelines for automated deployment.
+**Create Property Input**
+```json
+{
+  "name": "Beachside Villa",
+  "description": "Ocean view, 2 bedrooms",
+  "location": "Los Angeles, CA",
+  "price_per_night": 150.00
+}
+```
 
-10. **Documentation**
-     - Provide API documentation using tools like Swagger or Postman.
-     - Maintain a README file with setup and usage instructions.
+**Create Property Output**
+```json
+{
+  "message": "Property listed successfully",
+  "property_id": "prop-001"
+}
+```
+
+### Validation Rules
+- Name, location, and price_per_night are required.
+- Price must be a positive decimal value.
+
+### Performance Criteria
+- Property listing should load within 1s or 2 at max.
+- Support pagination and search filtering (location, price).
+
+---
+
+## 3. Booking System
+
+###  Functional Requirements
+- Users can book available properties.
+- Overlapping bookings must be prevented.
+- Users can view their booking history.
+- Hosts can view bookings for their properties.
+
+### API Endpoints
+
+| Method | Endpoint               | Description               |
+|--------|------------------------|---------------------------|
+| POST   | `/api/bookings`        | Create a new booking      |
+| GET    | `/api/bookings`        | Get bookings (auth user)  |
+| GET    | `/api/bookings/:id`    | Get booking by ID         |
+
+### Input/Output Example
+
+**Booking Input**
+```json
+{
+  "property_id": "prop-001",
+  "start_date": "2025-06-01",
+  "end_date": "2025-06-05"
+}
+```
+
+**Booking Output**
+```json
+{
+  "message": "Booking confirmed",
+  "booking_id": "book-001"
+}
+```
+
+### Validation Rules
+- Start date must be before end date.
+- Property must not be booked for overlapping dates.
+- Authenticated user required.
+
+### Performance Criteria
+- Check availability in < 300ms.
+- Prevent duplicate concurrent bookings using transactions or locks.
+
+---
